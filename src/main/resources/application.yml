@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: schemaforge
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/schemaforge}
+    username: ${DB_USERNAME:schemaforge}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: 2
+      connection-timeout: 10000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      connect-timeout: 1s
+      timeout: 1s
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+  tomcat:
+    max-http-form-post-size: 1MB
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+  health:
+    redis:
+      enabled: ${CACHE_ENABLED:false}
+logging:
+  structured:
+    format:
+      console: logstash
+springdoc:
+  swagger-ui:
+    url: /openapi.json
+forge:
+  schema: ${DB_SCHEMA:public}
+  tables: ${DB_TABLES:}
+  max-limit: 200
+  requests-per-minute: 120
+  cache-enabled: ${CACHE_ENABLED:false}
+  cache-seconds: 15
+  security:
+    jwt-secret: ${JWT_SECRET:}
+    issuer: ${JWT_ISSUER:schemaforge}
+    audience: ${JWT_AUDIENCE:schemaforge-api}
+    api-keys: []
+  policies:
+    "[*]":
+      read: [ADMIN]
+      write: [ADMIN]
